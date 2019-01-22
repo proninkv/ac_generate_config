@@ -50,7 +50,7 @@ sed -e '/^P/s:&:&amp;:g' -e '/^P/s:<:\&lt;:g' -e '/^P/s:>:\&gt;:g' -e '/^P/s:'\'
 sed -e 's: ::g' -e '/^,/d' -e '/^$/d' $1$3 > $1tmp5.csv
 
 #read the CSV file and generate all the XML files by the information in the CSV file.
-while IFS=, read mac IP_Addr NET_Mask NET_GW user DisplayName password Registrar Provisioning_Protocol Provisioning_IP; do
+while IFS=, read mac IP_Addr NET_Mask NET_GW user DisplayName password Registrar Provisioning_Protocol Provisioning_IP System_Type; do
 
 	#check if the MAC address matches the prefix of AC devices
 	if [[ $mac == *"000B82"* ]] || [[ $mac == *"000b82"* ]]; then
@@ -78,6 +78,7 @@ while IFS=, read mac IP_Addr NET_Mask NET_GW user DisplayName password Registrar
 		    -e "/^voip\/line\/0\/auth_password=/s:.*:voip/line/0/auth_password=$password:g" -e "/^voip\/signalling\/sip\/proxy_address=/s:.*:voip/signalling/sip/proxy_address=$Registrar:g" \
 		    -e "/^provisioning\/configuration\/url=/s:.*:provisioning/configuration/url=$Provisioning_Protocol\://$Provisioning_IP/configfiles/:g" \
 		    -e "/^ems_server\/provisioning\/url=http\:\/\//s:.*:ems_server/provisioning/url=http\://$Provisioning_IP/ipprest/:g" \
+		    -e "/^system\/type=/s:.*:system/type=$System_Type:g" \
 		    -e "/^provisioning\/firmware\/url=/s:.*:provisioning/firmware/url=$Provisioning_Protocol\://$Provisioning_IP/firmwarefiles/:g" < $1tmp4.xml > "$1$mac.cfg"
 	else
 
